@@ -1,0 +1,7 @@
+[package]
+name = "rust_lua_demo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+mlua = { version="0.9", features=["lua54", "vendored"] }

@@ -1,0 +1,38 @@
+# --- Rust ---
+/target/
+/Cargo.lock
+**/*.rs.bk
+
+# --- Lua ---
+*.luac
+luac.out
+
+# --- Logs & temporários ---
+*.log
+*.tmp
+*.bak
+*.swp
+
+# --- Configurações de editor/IDE ---
+.vscode/
+.idea/
+*.iml
+
+# --- SO ---
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# --- Outras pastas comuns ---
+/node_modules/
+/dist/
+/build/
