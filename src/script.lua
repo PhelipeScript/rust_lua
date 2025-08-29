@@ -34,7 +34,8 @@ function Validate_cpf(cpf)
 end
 
 function Format_cpf_mask(cpf)
-  -- logica para formatar o cpf no formato xxx.xxx.xxx-xx
+  return string.format("%s.%s.%s-%s", string.sub(cpf, 1, 3), string.sub(cpf, 4, 6), string.sub(cpf, 7, 9),
+    string.sub(cpf, 10, 11))
 end
 
 function Validate_date(date)
