@@ -1,8 +1,22 @@
 function ADD(key, value)
+  if string.sub(key, 1, 4) == "cpf_" then
+    if not Validate_cpf(value) then
+      error("CPF inválido")
+    end
+  end
+
   DB[key] = value
 end
 
 function GET(key)
+  if DB[key] == nil then
+    error("Chave não encontrada")
+  end
+
+  if string.sub(key, 1, 4) == "cpf_" then
+    return Format_cpf_mask(DB[key])
+  end
+
   return DB[key]
 end
 
@@ -18,7 +32,7 @@ function Validate_cpf(cpf)
     first_sum = first_sum + tonumber(string.sub(cpf, i, i)) * (11 - i)
   end
 
-  if (first_sum * 10) % 11 ~= tonumber(first_validator) then
+  if ((first_sum * 10) % 11) % 10 ~= tonumber(first_validator) then
     return false
   end
 
@@ -27,7 +41,7 @@ function Validate_cpf(cpf)
     second_sum = second_sum + tonumber(string.sub(cpf, i, i)) * (12 - i)
   end
 
-  if (second_sum * 10) % 11 ~= tonumber(second_validator) then
+  if ((second_sum * 10) % 11) % 10 ~= tonumber(second_validator) then
     return false
   end
   return true

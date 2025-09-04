@@ -10,7 +10,7 @@ const RED: &str = "\x1b[1;31m";
 const RESET: &str = "\x1b[0m";
 
 fn show_commands() {
-    println!("{BLUE}Execute algum comando. Exemplos:{RESET}");
+    println!("\n{BLUE}Execute algum comando. Exemplos:{RESET}");
     println!(
         "- {YELLOW}ADD{RESET} {CYAN}<abc>{RESET} {GREEN}<1234>{RESET} ---> Adiciona o valor 1234 na chave abc"
     );
@@ -18,7 +18,7 @@ fn show_commands() {
         "- {YELLOW}GET{RESET} {CYAN}<abc>{RESET} ---> Retorna o valor da chave abc se existir"
     );
     println!("- {YELLOW}COMMANDS{RESET} ---> Exibe novamente essa lista de comandos");
-    println!("- {RED}EXIT{RESET} --->  sair do programa");
+    println!("- {RED}EXIT{RESET} --->  sair do programa\n");
 }
 
 fn validate_key(key: &str) -> Result<String, String> {
@@ -79,8 +79,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 continue;
             }
 
-            let _: () = lua_add_f.call((key, value))?;
-            println!("{BLUE}Valor {GREEN}{value} {BLUE}adicionado a chave {CYAN}{key}{RESET}");
+            let result: Result<(), LuaError> = lua_add_f.call((key, value));
+            match result {
+                Ok(_) => {
+                    println!("{BLUE}Valor {GREEN}{value} {BLUE}adicionado a chave {CYAN}{key}{RESET}");
+                }
+                Err(error) => {
+                    eprintln!("{RED}ERROR: {error}{RESET}");
+                }
+            }
         } else if command_input.len() > 0 && command_input[0] == "GET" {
             let key = command_input.get(1).map(|s| s.as_str()).unwrap_or("");
 
@@ -95,11 +102,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("{BLUE}Valor: {value}{RESET}");
                 }
                 Err(_) => {
-                    println!("{RED}Chave {CYAN}{key} {RED}não encontrada.{RESET}");
-                    println!(
+                    eprintln!("{RED}Chave {CYAN}{key} {RED}não encontrada.{RESET}");
+                    eprintln!(
                         "DICA: {BLUE}Use o comando {YELLOW}ADD {CYAN}{key} {GREEN}<valor>{BLUE} para adicionar um valor a essa chave.{RESET}"
                     );
-                    continue;
                 }
             }
         } else if command_input.len() > 0 && command_input[0] == "COMMANDS" {
