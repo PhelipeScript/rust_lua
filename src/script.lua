@@ -5,6 +5,12 @@ function ADD(key, value)
     end
   end
 
+  if string.sub(key, 1, 5) == "data_" then
+    if not Validate_date(value) then
+      error("Data inválida. Formato esperado: YYYY-MM-DD")
+    end
+  end
+
   DB[key] = value
 end
 
@@ -15,6 +21,10 @@ function GET(key)
 
   if string.sub(key, 1, 4) == "cpf_" then
     return Format_cpf_mask(DB[key])
+  end
+
+  if string.sub(key, 1, 5) == "data_" then
+    return Format_date_br(DB[key])
   end
 
   return DB[key]
@@ -53,9 +63,35 @@ function Format_cpf_mask(cpf)
 end
 
 function Validate_date(date)
-  -- logica para formatar a data no formato ISO8601 (2022-10-23)
+  if not string.match(date, "^%d%d%d%d%-%d%d%-%d%d$") then
+    return false
+  end
+
+  local matches = {string.match(date, "^(%d%d%d%d)%-(%d%d)%-(%d%d)$")}
+  local year = tonumber(matches[1])
+  local month = tonumber(matches[2])
+  local day = tonumber(matches[3])
+
+  if month < 1 or month > 12 then
+    return false
+  end
+  if day < 1 or day > 31 then
+    return false
+  end
+  if (month == 4 or month == 6 or month == 9 or month == 11) and day > 30 then
+    return false
+  end
+
+  if month == 2 then
+    local is_leap_year = (year % 4 == 0 and year % 100 ~= 0) or (year % 400 == 0)
+    if (is_leap_year and day > 29) or (not is_leap_year and day > 28) then
+      return false
+    end
+  end
+
+  return true
 end
 
 function Format_date_br(date)
-  -- logica para formatar a data no formato dd/mm/yyyy
+  return string.format("%s/%s/%s", string.sub(date, 9, 10), string.sub(date, 6, 7), string.sub(date, 1, 4))
 end
