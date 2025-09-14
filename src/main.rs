@@ -85,7 +85,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("{BLUE}Valor {GREEN}{value} {BLUE}adicionado a chave {CYAN}{key}{RESET}");
                 }
                 Err(error) => {
-                    eprintln!("{RED}ERROR: {error}{RESET}");
+                    if let LuaError::RuntimeError(msg) = error {
+                        let first_line = msg.lines().next().unwrap_or("");
+                        
+                        let clean_msg = first_line
+                            .rsplitn(2, ':') 
+                            .next()
+                            .unwrap_or("")
+                            .trim();
+                        
+                        eprintln!("{RED}ERROR: {clean_msg}{RESET}");
+                    } else {
+                        eprintln!("{RED}ERROR: {error}{RESET}");
+                    }
                 }
             }
         } else if command_input.len() > 0 && command_input[0] == "GET" {
@@ -102,7 +114,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("{BLUE}Valor: {value}{RESET}");
                 }
                 Err(_) => {
-                    eprintln!("{RED}Chave {CYAN}{key} {RED}não encontrada.{RESET}");
+                    eprintln!("{RED}ERROR: Chave {CYAN}{key} {RED}não encontrada.{RESET}");
                     eprintln!(
                         "DICA: {BLUE}Use o comando {YELLOW}ADD {CYAN}{key} {GREEN}<valor>{BLUE} para adicionar um valor a essa chave.{RESET}"
                     );
@@ -111,7 +123,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else if command_input.len() > 0 && command_input[0] == "COMMANDS" {
             show_commands();
         } else {
-            println!("{RED}Comando inválido.{RESET}");
+            println!("{RED}ERROR: Comando inválido.{RESET}");
         }
     }
 

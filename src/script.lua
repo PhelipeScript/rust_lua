@@ -7,7 +7,7 @@ function ADD(key, value)
 
   if string.sub(key, 1, 5) == "data_" then
     if not Validate_date(value) then
-      error("Data inválida. Formato esperado: YYYY-MM-DD")
+      error("Data inválida. Formato esperado YYYY-MM-DD")
     end
   end
 
